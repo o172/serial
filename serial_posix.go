@@ -192,5 +192,13 @@ func (p *Port) Flush() error {
 }
 
 func (p *Port) Close() (err error) {
+	r1, _, e := syscall.Syscall(syscall.SYS_FCNTL,
+		uintptr(p.f.Fd()),
+		uintptr(syscall.F_SETFL),
+		uintptr(syscall.O_NONBLOCK))
+	if e != 0 || r1 != 0 {
+		fmt.Println("NONBLOCK", e, r1)
+	}
+
 	return p.f.Close()
 }
